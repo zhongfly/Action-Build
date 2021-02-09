@@ -14,7 +14,7 @@ on:
         default: 'Haleydu/Cimoc'
       ref:
         required: true
-         default: 'release-tci'
+        default: 'release-tci'
 
 jobs:
   build:
