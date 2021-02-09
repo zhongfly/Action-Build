@@ -28,6 +28,9 @@ jobs:
         ref: ${{ github.event.inputs.ref }}
         fetch-depth: 0      
     - uses: actions/checkout@v2
+      with:
+        path: ./my
+    - run: mv -f my/app/* app/
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
