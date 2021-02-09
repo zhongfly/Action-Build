@@ -27,6 +27,7 @@ jobs:
         repository: ${{ github.event.inputs.repo }}
         ref: ${{ github.event.inputs.ref }}
         fetch-depth: 0      
+    - uses: actions/checkout@v2
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
