@@ -22,7 +22,7 @@ jobs:
         name: clone my files
         with:
           path: ./my
-      - run: mv -f my/FuckCoolapk/* ./
+      - run: mv -f my/FuckCoolapk/app/src/main/java/com/fuckcoolapk/utils/FileUtil.java ./app/src/main/java/com/fuckcoolapk/utils/
 
       - name: Prepare Java 11
         uses: actions/setup-java@v1
@@ -68,7 +68,7 @@ jobs:
           java-version: 1.8
           java-package: jre
       - name: xpatch
-        run: java -jar xpatch.jar Coolapk.apk -xm ${{steps.sign_app.outputs.signedReleaseFile}} -o ./Coolapk-xposed.apk
+        run: java -jar ./my/FuckCoolapk/xpatch.jar ./my/FuckCoolapk/Coolapk.apk -xm ${{steps.sign_app.outputs.signedReleaseFile}} -o ./Coolapk-xposed.apk
       - name: upload xpatch apk
         uses: actions/upload-artifact@master
         if: success()
