@@ -1,4 +1,4 @@
-name: Build CI
+name: Build FuckCoolapk
 
 on: 
   workflow_dispatch:
