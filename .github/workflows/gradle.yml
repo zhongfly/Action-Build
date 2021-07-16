@@ -1,0 +1,68 @@
+name: Build Apk
+
+on: 
+  workflow_dispatch:
+    inputs:
+      java_version:
+        required: true
+        default: '1.8'
+      repo:
+        required: true
+      ref:
+        required: true
+        default: 'release-tci'
+#  push:
+#    branches: [ master ]
+
+env:
+  WARN_ON_PR: "artifact upload is disabled due to the workflow is trigged by pull request."
+
+jobs:
+  gradle:
+    name: Gradle CI Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0 
+
+      - name: Prepare Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ github.event.inputs.java_version }}
+          java-package: jdk+fx
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Build project
+        run: |
+          gradle wrapper
+          bash gradlew build
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Get Apk Info
+        id: apk
+        uses: JantHsueh/get-apk-info-action@master
+        with:
+          apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
+      - name: upload artifact
+        uses: actions/upload-artifact@master
+        if: success()
+        with:
+          name: apk_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
