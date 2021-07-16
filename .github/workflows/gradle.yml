@@ -5,12 +5,12 @@ on:
     inputs:
       java_version:
         required: true
-        default: '1.8'
+        default: '11'
       repo:
         required: true
       ref:
         required: true
-        default: 'release-tci'
+        default: 'master'
 #  push:
 #    branches: [ master ]
 
@@ -44,8 +44,7 @@ jobs:
 
       - name: Build project
         run: |
-          gradle wrapper
-          bash gradlew build
+          ./gradlew build
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
