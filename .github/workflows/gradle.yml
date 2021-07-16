@@ -11,11 +11,7 @@ on:
       ref:
         required: true
         default: 'master'
-#  push:
-#    branches: [ master ]
 
-env:
-  WARN_ON_PR: "artifact upload is disabled due to the workflow is trigged by pull request."
 
 jobs:
   gradle:
@@ -27,7 +23,7 @@ jobs:
         with:
           repository: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
-          fetch-depth: 0 
+          fetch-depth: 1 
 
       - name: Prepare Java
         uses: actions/setup-java@v1
