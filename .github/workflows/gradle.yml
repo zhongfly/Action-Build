@@ -59,5 +59,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: success()
         with:
-          name: apk_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
+          name: ${{steps.apk.outputs.package}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
