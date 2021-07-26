@@ -1,0 +1,86 @@
+name: Flutter CI Build
+
+on: 
+  workflow_dispatch:
+    inputs:
+      java_version:
+        required: true
+        default: '11'
+      flutter_version:
+        required: true
+        default: '2.x'
+      flutter_channel:
+        required: true
+        default: 'stable' # or: 'beta', 'dev' or 'master'
+      flutter_type:
+        required: true
+        default: 'apk'
+      flutter_build_params:
+        required: false
+        default: ''
+      repo:
+        required: true
+      ref:
+        required: true
+        default: 'master'
+      submodules:
+        required: true
+        default: 'false'
+
+
+jobs:
+  flutter:
+    name: Flutter CI Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1 
+          
+      - name: Checkout submodules
+        if: ${{ github.event.inputs.submodules != 'false' }}
+        run: git submodule update --init --recursive
+
+      - name: Prepare Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ github.event.inputs.java_version }}
+          java-package: jdk+fx
+
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ github.event.inputs.flutter_version }}
+          channel: ${{ github.event.inputs.flutter_channel }} # or: 'stable', 'beta', 'dev' or 'master'
+          
+      - name: Build project
+        run: |
+          flutter config --build-dir=build/outputs
+          flutter pub get
+          flutter test
+          flutter build ${{ github.event.inputs.flutter_trpe }} ${{ github.event.inputs.flutter_build_params }}
+
+      - name: Sign APK
+        if: ${{ github.event.inputs.flutter_trpe == 'apk' }}
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: build/outputs
+          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Get Apk Info
+        if: ${{ github.event.inputs.flutter_trpe == 'apk' }}
+        id: apk
+        uses: JantHsueh/get-apk-info-action@master
+        with:
+          apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
+      - name: upload artifact for apk
+        uses: actions/upload-artifact@master
+        if: ${{ github.event.inputs.flutter_trpe == 'apk' && success()}}
+        with:
+          name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
