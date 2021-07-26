@@ -66,7 +66,7 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: build/outputs
+          releaseDirectory: build/app/outputs/flutter-apk
           signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
