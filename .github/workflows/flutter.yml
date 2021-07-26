@@ -59,10 +59,10 @@ jobs:
         run: |
           flutter config --build-dir=build/outputs
           flutter pub get
-          flutter build ${{ github.event.inputs.flutter_trpe }} ${{ github.event.inputs.flutter_build_params }}
+          flutter build ${{ github.event.inputs.flutter_type }} ${{ github.event.inputs.flutter_build_params }}
 
       - name: Sign APK
-        if: ${{ github.event.inputs.flutter_trpe == 'apk' }}
+        if: ${{ github.event.inputs.flutter_type == 'apk' }}
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
@@ -72,14 +72,21 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
       - name: Get Apk Info
-        if: ${{ github.event.inputs.flutter_trpe == 'apk' }}
+        if: ${{ github.event.inputs.flutter_type == 'apk' }}
         id: apk
         uses: JantHsueh/get-apk-info-action@master
         with:
           apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
       - name: upload artifact for apk
         uses: actions/upload-artifact@master
-        if: ${{ github.event.inputs.flutter_trpe == 'apk' && success()}}
+        if: ${{ github.event.inputs.flutter_type == 'apk' && success()}}
         with:
           name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          
+      - name: upload artifact for others
+        uses: actions/upload-artifact@master
+        if: ${{ github.event.inputs.flutter_type != 'apk' && success()}}
+        with:
+          name: flutter_build
+          path: build/outputs/*
