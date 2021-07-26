@@ -11,6 +11,9 @@ on:
       ref:
         required: true
         default: 'master'
+      submodules:
+        required: true
+        default: 'false'
 
 
 jobs:
@@ -24,6 +27,10 @@ jobs:
           repository: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 1 
+          
+      - name: Checkout submodules
+        if: ${{ github.event.inputs.submodules != 'false' }}
+        run: git submodule update --init --recursive
 
       - name: Prepare Java
         uses: actions/setup-java@v1
