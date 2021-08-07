@@ -1,2 +1,2 @@
-# Cimoc-Build
-在线编译Cimoc
+# Apk-Build
+Using github action to build some app for Android.
