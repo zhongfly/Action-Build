@@ -1,0 +1,78 @@
+name: Build PIKAPI Apk
+
+on: 
+  workflow_dispatch:
+
+
+jobs:
+  gomobile:
+    name: Gomobile
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: 'niuhuan/pikapi-flutter'
+          ref: 'master' 
+      - name: Checkout submodules
+        if: ${{ github.event.inputs.submodules != 'false' }}
+        run: git submodule update --init --recursive
+      
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - uses: android-actions/setup-android@v2
+      - name: Install Android Platform
+        run: |
+          sdkmanager "platform-tools"
+          sdkmanager "platforms;android-30"
+          sdkmanager "build-tools;30.0.2"
+      - uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r21e
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+      - name: Get gomobile
+        run: |
+          go env -w GO111MODULE=on
+          go get golang.org/x/mobile/cmd/gomobile
+          gomobile init
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.x'
+          channel: 'stable'
+      
+      - name: Build project
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        run: |
+          flutter config --build-dir=build/outputs
+          cd go/mobile
+          sh bind-android.sh
+          cd ../../
+          flutter pub get
+          flutter build apk
+
+          
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: build/app/outputs/flutter-apk
+          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Get Apk Info
+        id: apk
+        uses: JantHsueh/get-apk-info-action@master
+        with:
+          apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
+      - name: upload artifact for apk
+        uses: actions/upload-artifact@master
+        if: success()
+        with:
+          name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
