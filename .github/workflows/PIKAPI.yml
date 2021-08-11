@@ -15,7 +15,6 @@ jobs:
           repository: 'niuhuan/pikapi-flutter'
           ref: 'master' 
       - name: Checkout submodules
-        if: ${{ github.event.inputs.submodules != 'false' }}
         run: git submodule update --init --recursive
       
       - uses: actions/setup-java@v1
