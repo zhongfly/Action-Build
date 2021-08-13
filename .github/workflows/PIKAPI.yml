@@ -3,6 +3,9 @@ name: Build PIKAPI Apk
 on: 
   workflow_dispatch:
 
+env:
+  flutter_channel: 'stable'
+  flutter_version: '2.x'
 
 jobs:
   gomobile:
@@ -16,20 +19,34 @@ jobs:
           ref: 'master' 
       - name: Checkout submodules
         run: git submodule update --init --recursive
-      
+      - name: Cache Go modules
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-cache-${{ env.flutter_version }}
+          restore-keys: |
+            ${{ runner.OS }}-flutter-cache-
+          
       - uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - uses: android-actions/setup-android@v2
-      - name: Install Android Platform
-        run: |
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-30"
-          sdkmanager "build-tools;30.0.2"
-      - uses: nttld/setup-ndk@v1
-        id: setup-ndk
+      - uses: maxim-lobanov/setup-android-tools@v1
         with:
-          ndk-version: r21e
+          packages: |
+            platform-tools
+            platforms;android-30
+            build-tools;30.0.2
+            ndk;22.1.7171670
+          cache: true
       - uses: actions/setup-go@v2
         with:
           go-version: '1.16'
@@ -40,12 +57,10 @@ jobs:
           gomobile init
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: '2.x'
-          channel: 'stable'
+          channel: ${{ env.flutter_channel }}
+          flutter-version: ${{ env.flutter_version }}
       
       - name: Build project
-        env:
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           flutter config --build-dir=build/outputs
           cd go/mobile
