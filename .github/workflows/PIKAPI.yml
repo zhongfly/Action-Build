@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-cache-${{ env.flutter_version }}
+          key: ${{ runner.OS }}-flutter-cache-${{ env.flutter_version }}-${{ env.flutter_channel }}
           restore-keys: |
             ${{ runner.OS }}-flutter-cache-
           
