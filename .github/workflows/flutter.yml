@@ -50,6 +50,13 @@ jobs:
           java-version: ${{ github.event.inputs.java_version }}
           java-package: jdk+fx
 
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-cache-${{ github.event.inputs.flutter_version }}-${{ github.event.inputs.flutter_channel }}
+          restore-keys: |
+            ${{ runner.OS }}-flutter-cache-
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ github.event.inputs.flutter_version }}
