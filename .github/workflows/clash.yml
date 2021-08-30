@@ -1,5 +1,11 @@
 name: Go
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
+    inputs:
+      target:
+        required: true
+        default: 'windows-amd64'
+
 jobs:
 
   build:
@@ -35,7 +41,7 @@ jobs:
         env:
           NAME: clash
           BINDIR: bin
-        run: make -j releases
+        run: make -j ${{ github.event.inputs.target }}
 
       - name: upload artifact
         uses: actions/upload-artifact@master
