@@ -1,4 +1,4 @@
-name: Go
+name: Build Clash Core
 on: 
   workflow_dispatch:
     inputs:
