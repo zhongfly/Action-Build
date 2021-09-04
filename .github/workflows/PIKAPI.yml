@@ -2,6 +2,7 @@ name: Build PIKAPI Apk
 
 on: 
   workflow_dispatch:
+    input:
       repo:
         required: true
         default: 'niuhuan/pikapi-flutter'
