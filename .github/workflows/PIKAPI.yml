@@ -2,6 +2,9 @@ name: Build PIKAPI Apk
 
 on: 
   workflow_dispatch:
+      repo:
+        required: true
+        default: 'niuhuan/pikapi-flutter'
 
 env:
   flutter_channel: 'stable'
@@ -15,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: 'niuhuan/pikapi-flutter'
+          repository: ${{ github.event.inputs.repo }}
           ref: 'master' 
       - name: Checkout submodules
         run: git submodule update --init --recursive
