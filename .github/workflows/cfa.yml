@@ -10,10 +10,6 @@ on:
         required: true
         default: 'main'
 
-env:
-  flutter_channel: 'stable'
-  flutter_version: '2.2.3'
-
 jobs:
   build:
     name: Build APK
