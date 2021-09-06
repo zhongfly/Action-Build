@@ -5,7 +5,7 @@ on:
     inputs:
       repo:
         required: true
-        default: 'zhongfly/clash-1'
+        default: 'zhongfly/ClashForAndroid'
       ref:
         required: true
         default: 'main'
