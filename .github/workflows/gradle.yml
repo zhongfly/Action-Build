@@ -46,8 +46,6 @@ jobs:
             build-tools;30.0.2
             ndk;22.1.7171670
           cache: true
-      - name: Setup Cmake & Ninja
-        uses: lukka/get-cmake@latest
 
       - name: Cache Gradle packages
         uses: actions/cache@v2
