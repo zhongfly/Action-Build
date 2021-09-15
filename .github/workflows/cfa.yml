@@ -79,7 +79,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
       - name: upload artifact for apk
-        uses: kittaakos/upload-artifact-as-is@v1
+        uses: kittaakos/upload-artifact-as-is@master
         if: success()
         with:
           path: app/build/outputs/apk/foss/release/*-signed.apk
