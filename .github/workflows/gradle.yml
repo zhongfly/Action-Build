@@ -61,6 +61,7 @@ jobs:
 
       - name: Build project
         run: |
+          gradle wrapper
           ./gradlew build
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
