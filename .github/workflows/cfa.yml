@@ -5,7 +5,7 @@ on:
     inputs:
       repo:
         required: true
-        default: 'zhongfly/ClashForAndroid'
+        default: 'Kr328/ClashForAndroid'
       ref:
         required: true
         default: 'main'
@@ -71,14 +71,8 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-      - name: Get Apk Info
-        id: apk
-        uses: JantHsueh/get-apk-info-action@master
-        with:
-          apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
       - name: upload artifact for apk
-        uses: actions/upload-artifact@master
+        uses: kittaakos/upload-artifact-as-is@v1
         if: success()
         with:
-          name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
           path: app/build/outputs/apk/foss/release/*-signed.apk
