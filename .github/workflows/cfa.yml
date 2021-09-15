@@ -22,6 +22,13 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
       - name: Checkout submodules
         run: git submodule update --init --recursive
+      - name: merge dev
+        run: |
+          cd ./core/src/foss/golang/clash/
+          patch=$(git format-patch HEAD^)
+          git remote add upstream https://github.com/Dreamacro/clash.git
+          git checkout -b dev upstream/dev
+          git am ${patch}
         
       - name: Cache Go modules
         uses: actions/cache@v2
