@@ -1,13 +1,14 @@
-name: Build Apk
+name: Build tachiyomi-extensions
 
 on: 
   workflow_dispatch:
     inputs:
       repo:
         required: true
+        default: "zhongfly/tachiyomi-extensions"
       ref:
         required: true
-        default: 'master'
+        default: 'zhongfly'
 
 
 jobs:
@@ -34,32 +35,29 @@ jobs:
         run: |
           mkdir -p ~/.gradle
           cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
- 
+          
       - name: Clean
         run: |
-          find ./src/zh -maxdepth 1 ! -name "copymanga" -exec rm -f {} \;
+          cd ./src/zh/
+          rm -rf `ls -I copymanga`
+          ls .
 
       - name: Build extensions
         uses: gradle/gradle-command-action@v1
         env:
           CI_MULTISRC: "false"
-          CI_MATRIX_LANG: "zh"
+          CI_MATRIX_LANG: zh
         with:
           arguments: assembleRelease
           distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
-
-      - name: Find Apk
-        run: |
-          echo '::set-output name=apkPath::$(find . -name "*.apk" -print)'
-        id: find_apk
-
+      
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: ${{ steps.find_apk.outputs.apkPath }}
+          releaseDirectory: ./src/zh/copymanga/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
