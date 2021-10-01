@@ -58,7 +58,7 @@ jobs:
         run: |
           go env -w GO111MODULE=auto
           go install golang.org/x/mobile/cmd/gomobile@latest
-          go install golang.org/x/mobile/cmd/gobind
+          go get golang.org/x/mobile/cmd/gobind
           gomobile init
       - uses: subosito/flutter-action@v1
         with:
@@ -76,6 +76,7 @@ jobs:
         run: |
           flutter config --build-dir=build/outputs
           cd go/mobile
+          go get -d golang.org/x/mobile/cmd/gomobile
           sh bind-android.sh
           cd ../../
           flutter pub get
