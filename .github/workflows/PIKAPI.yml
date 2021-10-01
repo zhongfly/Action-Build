@@ -58,6 +58,7 @@ jobs:
         run: |
           go env -w GO111MODULE=auto
           go get golang.org/x/mobile/cmd/gomobile
+          go get golang.org/x/mobile/bind
           gomobile init
       - uses: subosito/flutter-action@v1
         with:
