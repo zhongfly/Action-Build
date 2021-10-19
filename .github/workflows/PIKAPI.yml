@@ -36,9 +36,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-cache-${{ env.flutter_version }}-${{ env.flutter_channel }}
+          key: ${{ runner.OS }}-flutter-cache-${{ env.flutter_version }}-${{ env.flutter_channel }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-flutter-cache-
+            ${{ runner.OS }}-flutter-cache-${{ env.flutter_version }}-${{ env.flutter_channel }}
           
       - uses: actions/setup-java@v1
         with:
