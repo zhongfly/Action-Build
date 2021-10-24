@@ -9,7 +9,9 @@ on:
       ref:
         required: true
         default: 'zhongfly'
-
+      extension:
+        required: true
+        default: 'copymanga'
 
 jobs:
   gradle:
@@ -39,7 +41,7 @@ jobs:
       - name: Clean
         run: |
           cd ./src/zh/
-          rm -rf `ls -I copymanga`
+          rm -rf `ls -I ${{ github.event.inputs.extension }}`
           ls .
 
       - name: Build extensions
