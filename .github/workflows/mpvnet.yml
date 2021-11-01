@@ -1,0 +1,38 @@
+name: "mpv.net build"
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        required: true
+        default: 'stax76/mpv.net'
+      ref:
+        required: true
+        default: 'master'
+jobs:
+  build:
+    name: "Build mpv.net"
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+      - name: build
+        shell: cmd
+        run: ("C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64\msbuild" .\src\mpv.net.sln /t:Rebuild /p:WindowsTargetPlatformVersion=10.0.18362.0 /p:PlatformToolset=v142 /m /p:Configuration=Release)
+      - name: copy
+        shell: cmd
+        run: cmake -E copy ".\src\bin\mpvnet.exe" dist\mpvnet.exe && cmake -E copy ".\src\bin\mpvnet.exe.config" dist\mpvnet.exe.config && cmake -E copy ".\src\bin\mpvnet.pdb" dist\mpvnet.pdb
+      - name: Get version
+        shell: bash
+        run: |
+          grep --version
+          echo "version=$(cat src/Properties/AssemblyInfo.cs | grep -o 'AssemblyFileVersion.*' | grep -o '\([0-9]\+\.\)\+[0-9]\+')" >> $GITHUB_ENV
+      - name: upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: "mpv.net_${{ env.version }}"
+          path: dist
