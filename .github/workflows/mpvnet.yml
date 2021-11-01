@@ -29,7 +29,6 @@ jobs:
       - name: Get version
         shell: bash
         run: |
-          grep --version
           echo "version=$(cat src/Properties/AssemblyInfo.cs | grep -o 'AssemblyFileVersion.*' | grep -o '\([0-9]\+\.\)\+[0-9]\+')" >> $GITHUB_ENV
       - name: upload
         uses: actions/upload-artifact@v2
