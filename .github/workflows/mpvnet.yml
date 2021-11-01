@@ -20,9 +20,11 @@ jobs:
           repository: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 1
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1
       - name: Build
         shell: cmd
-        run: ("C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64\msbuild" .\src\mpv.net.sln /m /p:Configuration=Release)
+        run: (msbuild .\src\mpv.net.sln /m /p:Configuration=Release)
       - name: Get version
         shell: bash
         run: |
