@@ -1,2 +1,2 @@
-# Apk-Build
-Using github action to build some app for Android.
+# Action-Build
+Using github action to build applications
