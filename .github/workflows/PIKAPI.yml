@@ -5,7 +5,7 @@ on:
     inputs:
       repo:
         required: true
-        default: 'niuhuan/pikapi-flutter'
+        default: 'niuhuan/pikapi'
 
 env:
   flutter_channel: 'stable'
