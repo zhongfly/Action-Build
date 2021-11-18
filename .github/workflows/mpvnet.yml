@@ -24,7 +24,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1
       - name: Build
         shell: cmd
-        run: (msbuild .\src\mpv.net.sln /m /p:Configuration=Release)
+        run: (msbuild .\src\mpv.net.csproj /m /p:Configuration=Release)
       - name: Get version
         shell: bash
         run: |
