@@ -45,15 +45,12 @@ jobs:
           ls .
 
       - name: Build extensions
-        uses: gradle/gradle-command-action@v1
+        uses: gradle/gradle-command-action@v2
         env:
           CI_MULTISRC: "false"
           CI_MATRIX_LANG: zh
         with:
           arguments: assembleRelease
-          distributions-cache-enabled: true
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: true
       
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
