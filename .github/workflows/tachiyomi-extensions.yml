@@ -50,7 +50,7 @@ jobs:
           CI_MULTISRC: "false"
           CI_MATRIX_LANG: zh
         with:
-          arguments: assembleRelease
+          arguments: assembleDebug
       
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
