@@ -23,10 +23,7 @@ jobs:
         with:
           repository: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
-          fetch-depth: 1 
-          
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
+          fetch-depth: 1
 
       - name: Set up JDK
         uses: actions/setup-java@v1
@@ -37,6 +34,7 @@ jobs:
         run: |
           mkdir -p ~/.gradle
           cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
+          echo ${{ secrets.SIGNING_KEY }} | base64 -d > signingkey.jks
           
       - name: Clean
         run: |
@@ -49,26 +47,37 @@ jobs:
         env:
           CI_MULTISRC: "false"
           CI_MATRIX_LANG: zh
+          ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         with:
-          arguments: assembleDebug
+          arguments: assembleRelease
       
-      - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
+#       - name: Sign APK
+#         uses: r0adkll/sign-android-release@v1
+#         id: sign_app
+#         with:
+#           releaseDirectory: ./src/zh/${{ github.event.inputs.extension }}/build/outputs/apk/debug
+#           signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
+#           alias: ${{ secrets.KEY_ALIAS }}
+#           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+#           keyPassword: ${{ secrets.KEY_PASSWORD }}
+#       - name: Get Apk Info
+#         id: apk
+#         uses: JantHsueh/get-apk-info-action@master
+#         with:
+#           apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
+#       - name: upload artifact for apk
+#         uses: actions/upload-artifact@v2
+#         if: success()
+#         with:
+#           name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
+#           path: ${{steps.sign_app.outputs.signedReleaseFile}}
+
+      - name: Upload "${{ github.event.inputs.extension }}" APKs
+        uses: kittaakos/upload-artifact-as-is@master
         with:
-          releaseDirectory: ./src/zh/${{ github.event.inputs.extension }}/build/outputs/apk/debug
-          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-      - name: Get Apk Info
-        id: apk
-        uses: JantHsueh/get-apk-info-action@master
-        with:
-          apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
-      - name: upload artifact for apk
-        uses: actions/upload-artifact@v2
-        if: success()
-        with:
-          name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: "**/*.apk"
+
+      - name: Clean up CI files
+        run: rm signingkey.jks
