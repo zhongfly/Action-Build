@@ -1,0 +1,77 @@
+name: Build tachiyomi-extensions(old)
+
+on: 
+  workflow_dispatch:
+    inputs:
+      repo:
+        required: true
+        default: "zhongfly/tachiyomi-extensions"
+      ref:
+        required: true
+        default: 'copymanga'
+      extension:
+        required: true
+        default: 'copymangas'
+
+jobs:
+  gradle:
+    name: Gradle CI Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1 
+          
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Copy CI gradle.properties
+        run: |
+          mkdir -p ~/.gradle
+          cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
+          
+      - name: Clean
+        run: |
+          cd ./src/zh/
+          rm -rf `ls -I ${{ github.event.inputs.extension }}`
+          ls .
+
+      - name: Build extensions
+        uses: gradle/gradle-command-action@v1
+        env:
+          CI_MULTISRC: "false"
+          CI_MATRIX_LANG: zh
+        with:
+          arguments: assembleRelease
+          distributions-cache-enabled: true
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
+      
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: ./src/zh/${{ github.event.inputs.extension }}/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Get Apk Info
+        id: apk
+        uses: JantHsueh/get-apk-info-action@master
+        with:
+          apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
+      - name: upload artifact for apk
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
