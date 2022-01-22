@@ -8,10 +8,10 @@ on:
         default: "zhongfly/tachiyomi-extensions"
       ref:
         required: true
-        default: 'zhongfly'
+        default: 'copymanga'
       extension:
         required: true
-        default: 'copymanga'
+        default: 'copymangas'
 
 jobs:
   gradle:
