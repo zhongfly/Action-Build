@@ -20,8 +20,8 @@ jobs:
         with:
           repository: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
+          submodules: recursive
+
       - name: merge dev
         run: |
           cd ./core/src/foss/golang/clash/
