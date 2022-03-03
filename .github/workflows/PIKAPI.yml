@@ -62,7 +62,7 @@ jobs:
           go install golang.org/x/mobile/cmd/gomobile@latest
           go get golang.org/x/mobile/cmd/gobind
           gomobile init
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v2.3.0
         with:
           channel: ${{ env.flutter_channel }}
           flutter-version: ${{ env.flutter_version }}
