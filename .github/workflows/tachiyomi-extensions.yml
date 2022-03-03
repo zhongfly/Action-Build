@@ -8,7 +8,7 @@ on:
         default: "zhongfly/tachiyomi-extensions"
       ref:
         required: true
-        default: 'copymanga'
+        default: 'copymangas'
       extension:
         required: true
         default: 'copymangas'
