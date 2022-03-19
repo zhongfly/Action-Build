@@ -1,0 +1,45 @@
+name: Build web
+
+on: 
+  workflow_dispatch:
+    inputs:
+      repo:
+        required: true
+      ref:
+        required: false
+      node_version:
+        required: true
+        default: '14'
+      install_command:
+        required: true
+        default: 'yarn install || npm install'
+      build_command:
+        required: true
+        default: 'yarn build || npm run build'
+      output_path:
+        required: true
+        default: 'public'
+
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+          submodules: true
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ github.event.inputs.node_version }}
+      - name: Get dependencies and build
+        run: |
+          ${{ github.event.inputs.install_command }}
+          ${{ github.event.inputs.build_command }}
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: ${{ github.event.inputs.output_path }}
