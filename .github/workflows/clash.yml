@@ -2,6 +2,7 @@ name: Build Clash Core
 on: 
   workflow_dispatch:
     inputs:
+      # note: https://github.com/Dreamacro/clash/blob/master/Makefile
       target:
         required: true
         default: 'windows-amd64'
