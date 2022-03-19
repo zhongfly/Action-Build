@@ -54,6 +54,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         with:
           arguments: assembleRelease
+          cache-disabled: true
       
 #       - name: Sign APK
 #         uses: r0adkll/sign-android-release@v1
