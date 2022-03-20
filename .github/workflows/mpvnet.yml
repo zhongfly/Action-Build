@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     name: "Build mpv.net"
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,10 @@ jobs:
         uses: microsoft/setup-msbuild@v1
       - name: Build
         shell: cmd
-        run: (msbuild .\src\mpv.net.csproj /m /p:Configuration=Release)
+        run: |
+          cd src
+          msbuild -restore
+          msbuild mpv.net.csproj /m /p:Configuration=Release /p:Platform=x64
       - name: Get version
         shell: bash
         run: |
@@ -33,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: "mpv.net_${{ env.version }}"
-          path: src/bin
+          path: src/bin/x64/Release
