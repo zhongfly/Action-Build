@@ -42,7 +42,7 @@ jobs:
           7z x -y libmpv.7z -olibmpv
           cp -f libmpv/* mpv-dev/lib || true
           cp -f libmpv/include/* mpv-dev/include/mpv || true
-          wget -nv -O binaries/yt-dlp.exe ${{ github.event.inputs.libmpv_url }}
+          wget -nv -O binaries/yt-dlp.exe ${{ github.event.inputs.yt-dlp_url }}
       - name: Build
         run: |
           chmod +x *.sh
