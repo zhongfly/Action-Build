@@ -24,7 +24,7 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Cache Go modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
@@ -33,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Cache Flutter dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /opt/hostedtoolcache/flutter
           key: ${{ runner.OS }}-flutter-cache-${{ env.flutter_version }}-${{ env.flutter_channel }}-${{ hashFiles('**/pubspec.lock') }}
@@ -68,7 +68,7 @@ jobs:
           flutter-version: ${{ env.flutter_version }}
 
       - name: Cache pub dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ env.PUB_CACHE }}
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
