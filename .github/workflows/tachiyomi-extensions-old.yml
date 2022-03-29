@@ -47,7 +47,7 @@ jobs:
           ls .
 
       - name: Build extensions
-        uses: gradle/gradle-command-action@v2.1.4
+        uses: gradle/gradle-command-action@v2.1.5
         env:
           CI_MULTISRC: "false"
           CI_MATRIX_LANG: zh
