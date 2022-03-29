@@ -48,6 +48,6 @@ jobs:
         run: make -j ${{ github.event.inputs.target }}
 
       - name: upload artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
           path: bin/*

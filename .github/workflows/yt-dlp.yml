@@ -57,7 +57,7 @@ jobs:
       run: python pyinst.py
       
     - name: Upload yt-dlp.exe Windows binary
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v3
       with:
         name: yt-dlp_${{ needs.build_unix.outputs.ytdlp_version }}.exe
         path: ./dist/yt-dlp.exe
@@ -67,7 +67,7 @@ jobs:
         python pyinst.py --onedir
         Compress-Archive -LiteralPath ./dist/yt-dlp -DestinationPath ./dist/yt-dlp_win.zip
     - name: Upload yt-dlp Windows onedir
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v3
       with:
         name: yt-dlp_${{ needs.build_unix.outputs.ytdlp_version }}_win.zip
         path: ./dist/yt-dlp_win.zip
@@ -75,7 +75,7 @@ jobs:
     - name: Run py2exe Script
       run: python setup.py py2exe
     - name: Upload yt-dlp_min.exe Windows binary
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v3
       with:
         name: yt-dlp_${{ needs.build_unix.outputs.ytdlp_version }}_min.exe
         path: ./dist/yt-dlp.exe
@@ -110,7 +110,7 @@ jobs:
     - name: Run PyInstaller Script for 32 Bit
       run: python pyinst.py
     - name: Upload Executable yt-dlp_x86.exe
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v3
       with:
         name: yt-dlp_${{ needs.build_unix.outputs.ytdlp_version }}_x86.exe
         path: ./dist/yt-dlp_x86.exe

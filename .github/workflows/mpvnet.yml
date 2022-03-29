@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "version=$(cat src/Properties/AssemblyInfo.cs | grep -o 'AssemblyFileVersion.*' | grep -o '\([0-9]\+\.\)\+[0-9]\+')" >> $GITHUB_ENV
       - name: Upload
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "mpv.net_${{ env.version }}"
           path: src/bin/x64/Release

@@ -68,7 +68,7 @@ jobs:
         with:
           apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
       - name: upload artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}

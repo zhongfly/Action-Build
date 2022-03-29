@@ -87,14 +87,14 @@ jobs:
         with:
           apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
       - name: upload artifact for apk
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         if: ${{ github.event.inputs.flutter_type == 'apk' && success()}}
         with:
           name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
           
       - name: upload artifact for others
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         if: ${{ github.event.inputs.flutter_type != 'apk' && success()}}
         with:
           name: flutter_build
