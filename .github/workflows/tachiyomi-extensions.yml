@@ -9,6 +9,9 @@ on:
       ref:
         required: true
         default: 'copymangas'
+      lang:
+        required: true
+        default: 'zh'
       extension:
         required: true
         default: 'copymangas'
@@ -40,7 +43,7 @@ jobs:
           
       - name: Clean
         run: |
-          cd ./src/zh/
+          cd ./src/${{ github.event.inputs.lang }}/
           rm -rf `ls -I ${{ github.event.inputs.extension }}`
           ls .
 
@@ -48,7 +51,7 @@ jobs:
         uses: gradle/gradle-command-action@v2.1.5
         env:
           CI_MULTISRC: "false"
-          CI_MATRIX_LANG: zh
+          CI_MATRIX_LANG: ${{ github.event.inputs.lang }}
           ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -60,7 +63,7 @@ jobs:
 #         uses: r0adkll/sign-android-release@v1
 #         id: sign_app
 #         with:
-#           releaseDirectory: ./src/zh/${{ github.event.inputs.extension }}/build/outputs/apk/debug
+#           releaseDirectory: ./src/${{ github.event.inputs.lang }}/${{ github.event.inputs.extension }}/build/outputs/apk/debug
 #           signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
 #           alias: ${{ secrets.KEY_ALIAS }}
 #           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
