@@ -16,6 +16,9 @@ on:
         required: true
         default: 'copymangas'
 
+env:
+  CI_CHUNK_SIZE: 65
+
 jobs:
   gradle:
     name: Gradle CI Build
@@ -31,11 +34,10 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
-          java-version: 8
-          cache: 'gradle'
+          java-version: 11
+          distribution: adopt
 
-      - name: Copy CI gradle.properties
+      - name: Copy CI files
         run: |
           mkdir -p ~/.gradle
           cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
@@ -43,7 +45,10 @@ jobs:
           
       - name: Clean
         run: |
-          cd ./src/${{ github.event.inputs.lang }}/
+          cd ./src/
+          rm -rf `ls -I ${{ github.event.inputs.lang }}`
+          ls .
+          cd ./${{ github.event.inputs.lang }}/
           rm -rf `ls -I ${{ github.event.inputs.extension }}`
           ls .
 
@@ -51,13 +56,12 @@ jobs:
         uses: gradle/gradle-command-action@v2.1.6
         env:
           CI_MULTISRC: "false"
-          CI_MATRIX_LANG: ${{ github.event.inputs.lang }}
+          CI_CHUNK_NUM: 0
           ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         with:
           arguments: assembleRelease
-          cache-disabled: true
       
 #       - name: Sign APK
 #         uses: r0adkll/sign-android-release@v1
