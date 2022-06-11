@@ -37,10 +37,8 @@ jobs:
           java-version: 11
           distribution: adopt
 
-      - name: Copy CI files
+      - name: Prepare signing key
         run: |
-          mkdir -p ~/.gradle
-          cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
           echo ${{ secrets.SIGNING_KEY }} | base64 -d > signingkey.jks
           
       - name: Clean
