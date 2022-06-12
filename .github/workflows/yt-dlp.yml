@@ -15,7 +15,7 @@ jobs:
         repository: yt-dlp/yt-dlp
         fetch-depth: 0
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
           python-version: '3.8'
     - name: Set version suffix
@@ -37,7 +37,7 @@ jobs:
         fetch-depth: 0
     # 3.8 is used for Win7 support
     - name: Set up Python 3.8
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
           python-version: '3.8'
     - name: Install Requirements
@@ -91,7 +91,7 @@ jobs:
         fetch-depth: 0
     # 3.7 is used for Vista support. See https://github.com/yt-dlp/yt-dlp/issues/390
     - name: Set up Python 3.7 32-Bit
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
           python-version: '3.7'
           architecture: 'x86'
