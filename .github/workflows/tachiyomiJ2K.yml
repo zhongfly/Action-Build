@@ -29,7 +29,7 @@ jobs:
           mkdir -p ~/.gradle
           cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
       - name: Build app
-        uses: gradle/gradle-command-action@v2.1.7
+        uses: gradle/gradle-command-action@v2.2.0
         with:
           arguments: assembleStandardRelease
 
