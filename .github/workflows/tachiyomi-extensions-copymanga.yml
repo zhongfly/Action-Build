@@ -1,0 +1,67 @@
+name: Build tachiyomi-extensions
+
+on: 
+  workflow_dispatch:
+    inputs:
+      repo:
+        required: true
+        default: "tachiyomiorg/tachiyomi-extensions"
+      ref:
+        required: true
+        default: 'master'
+
+env:
+  CI_CHUNK_SIZE: 65
+
+jobs:
+  gradle:
+    name: Gradle CI Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: adopt
+
+      - name: Prepare signing key
+        run: |
+          echo ${{ secrets.SIGNING_KEY }} | base64 -d > signingkey.jks
+          
+      - name: Clean
+        run: |
+          cd ./src/
+          rm -rf `ls -I zh`
+          ls .
+          cd ./zh/
+          rm -rf `ls -I copymanga`
+          ls .
+          cd ./copymanga
+          sed -i '/RateLimit/d' ./src/eu/kanade/tachiyomi/extension/zh/copymanga/CopyManga.kt
+          find . -type f -name NonblockingRateLimitInterceptor.kt -exec rm -f {} \;
+      - name: Build extensions
+        uses: gradle/gradle-command-action@v2.1.7
+        env:
+          CI_MULTISRC: "false"
+          CI_CHUNK_NUM: 0
+          ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        with:
+          arguments: assembleRelease
+
+
+      - name: Upload "copymanga" APKs
+        uses: kittaakos/upload-artifact-as-is@master
+        with:
+          path: "**/*.apk"
+
+      - name: Clean up CI files
+        run: rm signingkey.jks
