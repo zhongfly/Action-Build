@@ -63,11 +63,13 @@ jobs:
         with:
           script: |
             const path = require('path');
-            const globber = await glob.create(`**.apk`);
+            const globber = await glob.create('**/*.apk');
             const files = await globber.glob();
             if ( files.length > 0 ) {
               const file = files[0];
-              core.exportVariable( `apk_path`, path.dirname(file) );
+              core.exportVariable( 'apk_path', path.dirname(file) );
+            } else {
+              core.setFailed(`Action failed because no apk found`);
             }
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
