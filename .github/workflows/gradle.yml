@@ -63,7 +63,7 @@ jobs:
         with:
           script: |
             const path = require('path');
-            const globber = await glob.create(`*.apk`);
+            const globber = await glob.create(`**.apk`);
             const files = await globber.glob();
             if ( files.length > 0 ) {
               const file = files[0];
