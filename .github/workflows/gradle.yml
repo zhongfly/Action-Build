@@ -14,7 +14,9 @@ on:
       submodules:
         required: true
         default: 'false'
-
+      build_command:
+        required: true
+        default: './gradlew app:assembleRelease'
 
 jobs:
   gradle:
@@ -40,24 +42,38 @@ jobs:
           java-package: jdk+fx
           cache: 'gradle'
 
-      - uses: maxim-lobanov/setup-android-tools@v1
-        with:
-          packages: |
-            platform-tools
-            platforms;android-30
-            build-tools;30.0.2
-            ndk;22.1.7171670
-          cache: true
+#       - uses: maxim-lobanov/setup-android-tools@v1
+#         with:
+#           packages: |
+#             platform-tools
+#             platforms;android-30
+#             build-tools;30.0.2
+#             ndk;22.1.7171670
+#           cache: true
 
       - name: Build project
         run: |
+          chmod +x gradlew
           gradle wrapper
-          ./gradlew build
+          ${{ github.event.inputs.build_command }}
+          
+      - name: "Get apk' name and path"
+        id: get_files
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const path = require('path');
+            const globber = await glob.create(`*.apk`);
+            const files = await globber.glob();
+            if ( files.length > 0 ) {
+              const file = files[0];
+              core.exportVariable( `apk_path`, path.dirname(file) );
+            }
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: ${{ env.apk_path }}
           signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
