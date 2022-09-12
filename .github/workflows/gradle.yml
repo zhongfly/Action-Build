@@ -57,7 +57,7 @@ jobs:
           gradle wrapper
           ${{ github.event.inputs.build_command }}
           
-      - name: "Get apk' name and path"
+      - name: "Get apk's path"
         id: get_files
         uses: actions/github-script@v6
         with:
