@@ -83,7 +83,7 @@ jobs:
 #           path: ${{steps.sign_app.outputs.signedReleaseFile}}
 
       - name: Upload "${{ github.event.inputs.extension }}" APKs
-        uses: kittaakos/upload-artifact-as-is@master
+        uses: zhongfly/upload-artifact@custom
         with:
           path: "**/*.apk"
 
