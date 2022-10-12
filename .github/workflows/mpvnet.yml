@@ -5,7 +5,7 @@ on:
     inputs:
       repo:
         required: true
-        default: 'stax76/mpv.net'
+        default: 'mpvnet-player/mpv.net'
       ref:
         required: true
         default: 'master'
