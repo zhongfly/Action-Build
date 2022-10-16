@@ -59,7 +59,7 @@ jobs:
           key: ${{ runner.OS }}-flutter-cache-${{ github.event.inputs.flutter_version }}-${{ github.event.inputs.flutter_channel }}
           restore-keys: |
             ${{ runner.OS }}-flutter-cache-
-      - uses: subosito/flutter-action@v2.4.0
+      - uses: subosito/flutter-action@v2.8.0
         with:
           flutter-version: ${{ github.event.inputs.flutter_version }}
           channel: ${{ github.event.inputs.flutter_channel }} # or: 'stable', 'beta', 'dev' or 'master'
