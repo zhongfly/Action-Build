@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: Jays2Kings/tachiyomiJ2K
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
