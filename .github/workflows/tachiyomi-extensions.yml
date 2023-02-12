@@ -51,7 +51,7 @@ jobs:
           ls .
 
       - name: Build extensions
-        uses: gradle/gradle-command-action@v2
+        uses: gradle/gradle-build-action@v2
         env:
           CI_MULTISRC: "false"
           CI_CHUNK_NUM: 0
@@ -59,7 +59,7 @@ jobs:
           KEY_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         with:
-          arguments: assembleRelease
+          arguments: assembleRelease -q
       
 #       - name: Sign APK
 #         uses: r0adkll/sign-android-release@v1
