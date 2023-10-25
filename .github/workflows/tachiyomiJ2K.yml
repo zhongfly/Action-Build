@@ -10,13 +10,17 @@ jobs:
 
     steps:
       - name: Clone repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: Jays2Kings/tachiyomiJ2K
           fetch-depth: 0
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
+      - name: customize
+        run: |
+          #disable new back progress animation
+          sed -i 's/CrossFadeChangeHandler(.*)/FadeChangeHandler()/' app/src/main/java/eu/kanade/tachiyomi/util/view/ControllerExtensions.kt
+          #disable warnings for large updates
+          sed -i 's/largestSourceSize > MANGA_PER_SOURCE_QUEUE_WARNING_THRESHOLD/false/' app/src/main/java/eu/kanade/tachiyomi/data/library/LibraryUpdateJob.kt
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -39,7 +43,7 @@ jobs:
           echo "VERSION_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Sign APK
         if: env.VERSION_TAG != ''
-        uses: r0adkll/sign-android-release@v1
+        uses: ilharp/sign-android-release@v1
         with:
           releaseDirectory: app/build/outputs/apk/standard/release
           signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
@@ -52,39 +56,39 @@ jobs:
         run: |
           set -e
           mv app/build/outputs/apk/standard/release/app-standard-universal-release-unsigned-signed.apk tachiyomij2k-${{ env.VERSION_TAG }}.apk
-          sha=`sha256sum tachiyomij2k-${{ env.VERSION_TAG }}.apk | awk '{ print $1 }'`
-          echo "APK_UNIVERSAL_SHA=$sha" >> $GITHUB_ENV
           cp app/build/outputs/apk/standard/release/app-standard-arm64-v8a-release-unsigned-signed.apk tachiyomij2k-arm64-v8a-${{ env.VERSION_TAG }}.apk
-          sha=`sha256sum tachiyomij2k-arm64-v8a-${{ env.VERSION_TAG }}.apk | awk '{ print $1 }'`
-          echo "APK_ARM64_V8A_SHA=$sha" >> $GITHUB_ENV
           cp app/build/outputs/apk/standard/release/app-standard-armeabi-v7a-release-unsigned-signed.apk tachiyomij2k-armeabi-v7a-${{ env.VERSION_TAG }}.apk
-          sha=`sha256sum tachiyomij2k-armeabi-v7a-${{ env.VERSION_TAG }}.apk | awk '{ print $1 }'`
-          echo "APK_ARMEABI_V7A_SHA=$sha" >> $GITHUB_ENV
           cp app/build/outputs/apk/standard/release/app-standard-x86-release-unsigned-signed.apk tachiyomij2k-x86-${{ env.VERSION_TAG }}.apk
-          sha=`sha256sum tachiyomij2k-x86-${{ env.VERSION_TAG }}.apk | awk '{ print $1 }'`
-          echo "APK_X86_SHA=$sha" >> $GITHUB_ENV
+          cp app/build/outputs/apk/standard/release/app-standard-x86_64-release-unsigned-signed.apk tachiyomij2k-x86_64-${{ env.VERSION_TAG }}.apk
+
 
       - name: upload Universal
         uses: actions/upload-artifact@v3
         if: success()
         with:
-          name: tachiyomij2k-${{ env.VERSION_TAG }}.apk
+          name: tachiyomij2k-${{ env.VERSION_TAG }}
           path: tachiyomij2k-${{ env.VERSION_TAG }}.apk
       - name: upload arm64-v8a
         uses: actions/upload-artifact@v3
         if: success()
         with:
-          name: tachiyomij2k-arm64-v8a-${{ env.VERSION_TAG }}.apk
+          name: tachiyomij2k-arm64-v8a-${{ env.VERSION_TAG }}
           path: tachiyomij2k-arm64-v8a-${{ env.VERSION_TAG }}.apk
       - name: upload armeabi-v7a
         uses: actions/upload-artifact@v3
         if: success()
         with:
-          name: tachiyomij2k-armeabi-v7a-${{ env.VERSION_TAG }}.apk
+          name: tachiyomij2k-armeabi-v7a-${{ env.VERSION_TAG }}
           path: tachiyomij2k-armeabi-v7a-${{ env.VERSION_TAG }}.apk
       - name: upload x86
         uses: actions/upload-artifact@v3
         if: success()
         with:
-          name: tachiyomij2k-x86-${{ env.VERSION_TAG }}.apk
+          name: tachiyomij2k-x86-${{ env.VERSION_TAG }}
           path: tachiyomij2k-x86-${{ env.VERSION_TAG }}.apk
+      - name: upload x86_64
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: tachiyomij2k-x86_64-${{ env.VERSION_TAG }}
+          path: tachiyomij2k-x86_64-${{ env.VERSION_TAG }}.apk
