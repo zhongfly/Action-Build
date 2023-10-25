@@ -45,9 +45,9 @@ jobs:
         if: env.VERSION_TAG != ''
         uses: ilharp/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/standard/release
-          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
+          releaseDir: app/build/outputs/apk/standard/release
+          signingKey: ${{ secrets.SIGN_FILE_BASE64 }}
+          keyAlias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
