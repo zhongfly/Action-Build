@@ -8,7 +8,7 @@ on:
         default: 'mpvnet-player/mpv.net'
       ref:
         required: true
-        default: 'master'
+        default: 'main'
 jobs:
   build:
     name: "Build mpv.net"
