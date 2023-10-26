@@ -30,7 +30,7 @@ jobs:
         run: |
           cd src
           dotnet restore
-          dotnet publish "MpvNet.Windows" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false
+          dotnet publish "MpvNet.Windows" -c Release -r win-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true --self-contained false
       # - name: Get version
       #   shell: bash
       #   run: |
