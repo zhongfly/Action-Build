@@ -28,7 +28,7 @@ jobs:
           cd src
           nuget restore
           msbuild -restore
-          msbuild MpvNet.sln /m /p:Configuration=Release /p:RuntimeIdentifier=win-x64 /p:PublishSingleFile=true
+          msbuild MpvNet.sln /m /p:Configuration=Release /p:PublishSingleFile=true
       - name: Get version
         shell: bash
         run: |
