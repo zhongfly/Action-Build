@@ -32,7 +32,7 @@ jobs:
       - name: Get version
         shell: bash
         run: |
-          echo "version=$(sed -e 's/<FileVersion>(.*)<\/FileVersion>/\1/' src/MpvNet.Windows/MpvNet.Windows.csproj )" >> $GITHUB_ENV
+          echo "version=$(sed -e 's/<FileVersion>\(.*\)<\/FileVersion>/\1/' src/MpvNet.Windows/MpvNet.Windows.csproj )" >> $GITHUB_ENV
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
