@@ -28,11 +28,11 @@ jobs:
           cd src
           nuget restore
           msbuild -restore
-          msbuild MpvNet.sln /m /p:Configuration=Release
+          msbuild MpvNet.sln /m /p:Configuration=Release /p:RuntimeIdentifier=win-x64 /p:PublishSingleFile=true
       - name: Get version
         shell: bash
         run: |
-          echo "version=$(sed -e 's/<FileVersion>\(.*\)<\/FileVersion>/\1/' src/MpvNet.Windows/MpvNet.Windows.csproj )" >> $GITHUB_ENV
+          echo "version=$(sed -re 's/<FileVersion>\([\.0-9]*\)<\/FileVersion>/\1/' src/MpvNet.Windows/MpvNet.Windows.csproj )" >> $GITHUB_ENV
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
