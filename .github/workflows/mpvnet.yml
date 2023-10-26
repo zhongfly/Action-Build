@@ -13,28 +13,31 @@ jobs:
   build:
     name: "Build mpv.net"
     runs-on: windows-2022
-
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - uses: actions/checkout@v4
         with:
           repository: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 1
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1
+      - name: Setup dotnet 
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+          cache: true
       - name: Build
         shell: cmd
         run: |
           cd src
-          nuget restore
-          msbuild -restore
-          msbuild MpvNet.sln /m /p:Configuration=Release /p:PublishSingleFile=true
-      - name: Get version
-        shell: bash
-        run: |
-          echo "version=$(sed -re 's/<FileVersion>\([\.0-9]*\)<\/FileVersion>/\1/' src/MpvNet.Windows/MpvNet.Windows.csproj )" >> $GITHUB_ENV
+          dotnet restore
+          dotnet publish -c Release -p:PublishSingleFile=true -p:PublishTrimmed=true
+      # - name: Get version
+      #   shell: bash
+      #   run: |
+      #     echo "version=$(sed -re 's/<FileVersion>\([\.0-9]*\)<\/FileVersion>/\1/' src/MpvNet.Windows/MpvNet.Windows.csproj )" >> $GITHUB_ENV
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: "mpv.net_${{ env.version }}"
+          name: "mpv.net"
           path: src/MpvNet.Windows/bin/Release/
