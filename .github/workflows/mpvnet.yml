@@ -39,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: "mpv.net"
-          path: src/MpvNet.Windows/bin/Release/
+          path: src\MpvNet.Windows\bin\Release\win-x64\publish\
