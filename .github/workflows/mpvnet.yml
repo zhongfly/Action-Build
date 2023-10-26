@@ -25,7 +25,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.x
-          cache: true
       - name: Build
         shell: cmd
         run: |
