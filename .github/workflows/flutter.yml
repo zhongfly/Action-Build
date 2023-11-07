@@ -77,7 +77,13 @@ jobs:
           flutter config --build-dir=build/outputs
           flutter pub get
           flutter build ${{ github.event.inputs.flutter_type }} ${{ github.event.inputs.flutter_build_params }}
-          
+
+      - name: upload artifact
+        if: ${{ github.event.inputs.flutter_type == 'apk' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter_apk
+          path: "**/*.apk"
       - name: upload artifact
         uses: actions/upload-artifact@v3
         with:
