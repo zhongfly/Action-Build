@@ -17,7 +17,7 @@ on:
         default: 'apk'
       flutter_build_params:
         required: false
-        default: '--disable-telemetry --release --target-platform=android-arm64'
+        default: '--release --target-platform=android-arm64'
       repo:
         required: true
       ref:
@@ -66,11 +66,11 @@ jobs:
       - name: Decode keystore and create jks and properties file
         if: ${{ github.event.inputs.flutter_type == 'apk' }}
         run: |
-          echo "${{ secrets.SIGN_FILE_BASE64 }}" | base64 -di > keystore.jks
-          echo "storeFile=keystore.jks" >> key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> key.properties
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> key.properties
+          echo "${{ secrets.SIGN_FILE_BASE64 }}" | base64 -di > android/keystore.jks
+          echo "storeFile=keystore.jks" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
 
       - name: Build project
         run: |
