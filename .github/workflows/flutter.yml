@@ -5,10 +5,10 @@ on:
     inputs:
       java_version:
         required: true
-        default: '11'
+        default: '17'
       flutter_version:
         required: true
-        default: '2.x'
+        default: '3.x'
       flutter_channel:
         required: true
         default: 'stable' # or: 'beta', 'dev' or 'master'
@@ -17,12 +17,12 @@ on:
         default: 'apk'
       flutter_build_params:
         required: false
-        default: ''
+        default: '--release --target-platform=android-arm64'
       repo:
         required: true
       ref:
         required: true
-        default: 'master'
+        default: ''
       submodules:
         required: true
         default: 'false'
