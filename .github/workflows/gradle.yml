@@ -5,12 +5,12 @@ on:
     inputs:
       java_version:
         required: true
-        default: '11'
+        default: '17'
       repo:
         required: true
       ref:
-        required: true
-        default: 'master'
+        required: false
+        default: ''
       submodules:
         required: true
         default: 'false'
@@ -37,7 +37,7 @@ jobs:
       - name: Prepare Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: ${{ github.event.inputs.java_version }}
           java-package: jdk+fx
           cache: 'gradle'
@@ -72,22 +72,25 @@ jobs:
               core.setFailed(`Action failed because no apk found`);
             }
       - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
         id: sign_app
+        uses: ilharp/sign-android-release@v1
         with:
-          releaseDirectory: ${{ env.apk_path }}
-          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
+          releaseDir: ${{ env.apk_path }}
+          signingKey: ${{ secrets.SIGN_FILE_BASE64 }}
+          keyAlias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
       - name: Get Apk Info
         id: apk
-        uses: JantHsueh/get-apk-info-action@master
-        with:
-          apkPath: ${{steps.sign_app.outputs.signedReleaseFile}}
+        run: |
+          ln $ANDROID_SDK_ROOT/cmdline-tools/version/bin/apkanalyzer apkanalyzer
+          file="$(cut -d':' -f1 <<<'${{ steps.sign_app.outputs.signedFiles }}')"
+          echo "version_name=$(apkanalyzer manifest version-name $file)" >> "$GITHUB_OUTPUT"
+          echo "version_code=$(apkanalyzer manifest version-code $file)" >> "$GITHUB_OUTPUT"
+          echo "application_id=$(apkanalyzer manifest application-id $file)" >> "$GITHUB_OUTPUT"
       - name: upload artifact
         uses: actions/upload-artifact@v3
         if: success()
         with:
-          name: ${{steps.apk.outputs.applicationId}}_${{steps.apk.outputs.versionNum}}_${{steps.apk.outputs.versionCode}}
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          name: ${{steps.apk.outputs.application_id}}_${{steps.apk.outputs.version_name}}_${{steps.apk.outputs.version_code}}
+          path: ${{ env.apk_path }}/*.apk
