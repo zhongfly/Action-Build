@@ -83,7 +83,7 @@ jobs:
       - name: Get Apk Info
         id: apk
         run: |
-          ln $(find $ANDROID_SDK_ROOT/cmdline-tools/ -type f -name apkanalyzer) apkanalyzer
+          find $ANDROID_SDK_ROOT/cmdline-tools/ -type f -name apkanalyzer -exec ln -s '{}' apkanalyzer ';'
           file="$(cut -d':' -f1 <<<'${{ steps.sign_app.outputs.signedFiles }}')"
           echo "version_name=$(apkanalyzer manifest version-name $file)" >> "$GITHUB_OUTPUT"
           echo "version_code=$(apkanalyzer manifest version-code $file)" >> "$GITHUB_OUTPUT"
