@@ -85,13 +85,15 @@ jobs:
         id: apk
         run: |
           find ${{ env.apk_dir }} -type f -name '*-temp.apk' | sudo xargs -I {} rm -f {}
+          find ${{ env.apk_dir }} -type f -name '*-unsigned.apk' | sudo xargs -I {} rm -f {}
+          file=$(find ${{ env.apk_dir }} -type f -name '*-signed.apk' -print | head -n 1)
           find $ANDROID_SDK_ROOT/cmdline-tools/ -type f -name apkanalyzer | sudo xargs -I {} ln -s {} /usr/bin/apkanalyzer
-          echo "version_name=$(apkanalyzer manifest version-name ${{ env.apk_path }})" >> "$GITHUB_OUTPUT"
-          echo "version_code=$(apkanalyzer manifest version-code ${{ env.apk_path }}))" >> "$GITHUB_OUTPUT"
-          echo "application_id=$(apkanalyzer manifest application-id ${{ env.apk_path }}))" >> "$GITHUB_OUTPUT"
+          echo "version_name=$(apkanalyzer manifest version-name $file)" >> "$GITHUB_OUTPUT"
+          echo "version_code=$(apkanalyzer manifest version-code $file)" >> "$GITHUB_OUTPUT"
+          echo "application_id=$(apkanalyzer manifest application-id $file)" >> "$GITHUB_OUTPUT"
       - name: upload artifact
         uses: actions/upload-artifact@v3
         if: success()
         with:
           name: ${{steps.apk.outputs.application_id}}_${{steps.apk.outputs.version_name}}_${{steps.apk.outputs.version_code}}
-          path: ${{ env.apk_path }}/*.apk
+          path: ${{ env.apk_dir }}/*.apk
