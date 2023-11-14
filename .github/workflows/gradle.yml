@@ -67,7 +67,7 @@ jobs:
             const files = await globber.glob();
             if ( files.length > 0 ) {
               const file = files[0];
-              core.exportVariable( 'apk_path', path.dirname(file) );
+              core.exportVariable( 'apk_path', file );
               core.exportVariable( 'apk_dir', path.dirname(file) );
             } else {
               core.setFailed(`Action failed because no apk found`);
