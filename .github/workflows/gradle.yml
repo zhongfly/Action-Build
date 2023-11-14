@@ -37,7 +37,7 @@ jobs:
       - name: Prepare Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: ${{ github.event.inputs.java_version }}
           java-package: jdk+fx
           cache: 'gradle'
