@@ -68,6 +68,7 @@ jobs:
             if ( files.length > 0 ) {
               const file = files[0];
               core.exportVariable( 'apk_path', path.dirname(file) );
+              core.exportVariable( 'apk_dir', path.dirname(file) );
             } else {
               core.setFailed(`Action failed because no apk found`);
             }
@@ -75,7 +76,7 @@ jobs:
         id: sign_app
         uses: ilharp/sign-android-release@v1
         with:
-          releaseDir: ${{ env.apk_path }}
+          releaseDir: ${{ env.apk_dir }}
           signingKey: ${{ secrets.SIGN_FILE_BASE64 }}
           keyAlias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -83,11 +84,11 @@ jobs:
       - name: Get Apk Info
         id: apk
         run: |
+          find ${{ env.apk_dir }} -type f -name '*-temp.apk' | sudo xargs -I {} rm -f {}
           find $ANDROID_SDK_ROOT/cmdline-tools/ -type f -name apkanalyzer | sudo xargs -I {} ln -s {} /usr/bin/apkanalyzer
-          file="$(cut -d':' -f1 <<<'${{ steps.sign_app.outputs.signedFiles }}')"
-          echo "version_name=$(apkanalyzer manifest version-name $file)" >> "$GITHUB_OUTPUT"
-          echo "version_code=$(apkanalyzer manifest version-code $file)" >> "$GITHUB_OUTPUT"
-          echo "application_id=$(apkanalyzer manifest application-id $file)" >> "$GITHUB_OUTPUT"
+          echo "version_name=$(apkanalyzer manifest version-name ${{ env.apk_path }})" >> "$GITHUB_OUTPUT"
+          echo "version_code=$(apkanalyzer manifest version-code ${{ env.apk_path }}))" >> "$GITHUB_OUTPUT"
+          echo "application_id=$(apkanalyzer manifest application-id ${{ env.apk_path }}))" >> "$GITHUB_OUTPUT"
       - name: upload artifact
         uses: actions/upload-artifact@v3
         if: success()
