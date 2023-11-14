@@ -84,6 +84,9 @@ jobs:
         id: apk
         run: |
           ln -s /usr/local/lib/android/sdk/cmdline-tools/latest/bin/apkanalyzer ./apkanalyzer
+          /usr/local/lib/android/sdk/cmdline-tools/latest/bin/apkanalyzer
+          apkanalyzer
+          
           file="$(cut -d':' -f1 <<<'${{ steps.sign_app.outputs.signedFiles }}')"
           echo "version_name=$(apkanalyzer manifest version-name $file)" >> "$GITHUB_OUTPUT"
           echo "version_code=$(apkanalyzer manifest version-code $file)" >> "$GITHUB_OUTPUT"
