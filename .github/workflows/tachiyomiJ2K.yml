@@ -23,7 +23,7 @@ jobs:
           sed -i 's/largestSourceSize > MANGA_PER_SOURCE_QUEUE_WARNING_THRESHOLD/false/' app/src/main/java/eu/kanade/tachiyomi/data/library/LibraryUpdateJob.kt
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
