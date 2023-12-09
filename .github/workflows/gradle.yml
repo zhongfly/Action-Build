@@ -14,9 +14,12 @@ on:
       submodules:
         required: true
         default: 'false'
+      gradle_version:
+        required: false
+        default: 'wrapper'
       build_command:
         required: true
-        default: './gradlew app:assembleRelease'
+        default: './gradlew assembleRelease'
 
 jobs:
   gradle:
@@ -51,10 +54,11 @@ jobs:
 #             ndk;22.1.7171670
 #           cache: true
 
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
       - name: Build project
         run: |
-          chmod +x gradlew
-          gradle wrapper
           ${{ github.event.inputs.build_command }}
           
       - name: "Get apk's path"
