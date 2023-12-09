@@ -31,7 +31,10 @@ jobs:
           dotnet publish "MpvNet.Windows" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false
       - name: Create .mo files for localization
         shell: pwsh
-        run: Install-Package Gettext.Tools -Force; .\lang\create-mo-files.ps1
+        run: |
+          Install-Package Gettext.Tools -Force
+          (Get-Content .\lang\create-mo-files.ps1) -Replace 'bin/Debug', 'bin/Release/win-x64/publish' | Set-Content .\lang\create-mo-files.ps1
+          .\lang\create-mo-files.ps1
       # - name: Get version
       #   shell: bash
       #   run: |
