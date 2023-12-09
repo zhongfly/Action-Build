@@ -13,8 +13,6 @@ jobs:
   build:
     name: "Build mpv.net"
     runs-on: windows-2022
-    env:
-      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,7 +28,10 @@ jobs:
         run: |
           cd src
           dotnet restore
-          dotnet publish "MpvNet.Windows" -c Release -r win-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true --self-contained false
+          dotnet publish "MpvNet.Windows" -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false
+      - name: Create .mo files for localization
+        shell: pwsh
+        run: Install-Package Gettext.Tools -Force; .\lang\create-mo-files.ps1
       # - name: Get version
       #   shell: bash
       #   run: |
