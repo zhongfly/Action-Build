@@ -39,7 +39,7 @@ jobs:
           ${{ github.event.inputs.install_command }}
           ${{ github.event.inputs.build_command }}
       - name: upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: ${{ github.event.inputs.output_path }}

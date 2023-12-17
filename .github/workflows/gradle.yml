@@ -96,7 +96,7 @@ jobs:
           echo "version_code=$(apkanalyzer manifest version-code $file)" >> "$GITHUB_OUTPUT"
           echo "application_id=$(apkanalyzer manifest application-id $file)" >> "$GITHUB_OUTPUT"
       - name: upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           name: ${{steps.apk.outputs.application_id}}_${{steps.apk.outputs.version_name}}_${{steps.apk.outputs.version_code}}
