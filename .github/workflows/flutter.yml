@@ -26,6 +26,9 @@ on:
       submodules:
         required: false
         default: 'false'
+      name_pattern:
+        required: false
+        default: 'build/**/release/*arm64*.apk'
 
 
 jobs:
@@ -79,13 +82,7 @@ jobs:
           flutter build ${{ github.event.inputs.flutter_type }} ${{ github.event.inputs.flutter_build_params }}
 
       - name: upload artifact
-        if: ${{ github.event.inputs.flutter_type == 'apk' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter_apk
-          path: "**/*.apk"
-      - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: flutter_build
-          path: build/outputs/*
+          path: ${{ inputs.name_pattern }}
