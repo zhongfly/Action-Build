@@ -1,6 +1,13 @@
 name: tachiyomiJ2K
 on:
   workflow_dispatch:
+    inputs:
+      repo:
+        required: true
+        default: 'Jays2Kings/tachiyomiJ2K'
+      ref:
+        required: false
+        default: ''
 
         
 jobs:
@@ -12,13 +19,14 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v4
         with:
-          repository: Jays2Kings/tachiyomiJ2K
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
 
       - name: customize
         run: |
           #disable new back progress animation
-          sed -i 's/CrossFadeChangeHandler(.*)/FadeChangeHandler()/' app/src/main/java/eu/kanade/tachiyomi/util/view/ControllerExtensions.kt
+          #sed -i 's/CrossFadeChangeHandler(.*)/FadeChangeHandler()/' app/src/main/java/eu/kanade/tachiyomi/util/view/ControllerExtensions.kt
           #disable warnings for large updates
           sed -i 's/largestSourceSize > MANGA_PER_SOURCE_QUEUE_WARNING_THRESHOLD/false/' app/src/main/java/eu/kanade/tachiyomi/data/library/LibraryUpdateJob.kt
 
