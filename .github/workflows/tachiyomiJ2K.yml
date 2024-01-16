@@ -26,7 +26,7 @@ jobs:
       - name: customize
         run: |
           #disable new back progress animation
-          #sed -i 's/CrossFadeChangeHandler(.*)/FadeChangeHandler()/' app/src/main/java/eu/kanade/tachiyomi/util/view/ControllerExtensions.kt
+          sed -i 's/CrossFadeChangeHandler(.*)/FadeChangeHandler()/' app/src/main/java/eu/kanade/tachiyomi/util/view/ControllerExtensions.kt
           #disable warnings for large updates
           sed -i 's/largestSourceSize > MANGA_PER_SOURCE_QUEUE_WARNING_THRESHOLD/false/' app/src/main/java/eu/kanade/tachiyomi/data/library/LibraryUpdateJob.kt
 
