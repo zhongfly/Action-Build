@@ -54,8 +54,10 @@ jobs:
 #             ndk;22.1.7171670
 #           cache: true
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+      - name: Build
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ github.event.inputs.gradle_version }}
 
       - name: Build project
         run: |
@@ -89,9 +91,8 @@ jobs:
       - name: Get Apk Info
         id: apk
         run: |
-          find ${{ env.apk_dir }} -type f -name '*-temp.apk' | sudo xargs -I {} rm -f {}
-          find ${{ env.apk_dir }} -type f -name '*-unsigned.apk' | sudo xargs -I {} rm -f {}
-          file=$(find ${{ env.apk_dir }} -type f -name '*-signed.apk' -print | head -n 1)
+          find ${{ env.apk_dir }} -type f -name '*.apk' ! -name "*-signed.apk" | sudo xargs -I {} rm -f {}
+          file=$(find ${{ env.apk_dir }} -type f -name "*-signed.apk" -print | head -n 1)
           find $ANDROID_SDK_ROOT/cmdline-tools/ -type f -name apkanalyzer | sudo xargs -I {} ln -s {} /usr/bin/apkanalyzer
           echo "version_name=$(apkanalyzer manifest version-name $file)" >> "$GITHUB_OUTPUT"
           echo "version_code=$(apkanalyzer manifest version-code $file)" >> "$GITHUB_OUTPUT"
