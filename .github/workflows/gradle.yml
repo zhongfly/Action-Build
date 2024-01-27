@@ -59,6 +59,7 @@ jobs:
 
       - name: Build project
         run: |
+          chmod +x gradlew | true
           ${{ github.event.inputs.build_command }}
           
       - name: "Get apk's path"
