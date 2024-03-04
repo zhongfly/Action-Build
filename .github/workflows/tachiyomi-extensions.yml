@@ -55,7 +55,7 @@ jobs:
           ls .
 
       - name: Build extensions
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         env:
           CI_MULTISRC: "false"
           CI_CHUNK_NUM: 0
