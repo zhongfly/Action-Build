@@ -80,7 +80,7 @@ jobs:
             }
       - name: Sign APK
         id: sign_app
-        uses: ilharp/sign-android-release@v1
+        uses: ilharp/sign-android-release@nightly
         with:
           releaseDir: ${{ env.apk_dir }}
           signingKey: ${{ secrets.SIGN_FILE_BASE64 }}
