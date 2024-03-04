@@ -31,7 +31,7 @@ jobs:
         with:
           repository: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
-          fetch-depth: 1 
+          fetch-depth: 0 
           
       - name: Checkout submodules
         if: ${{ github.event.inputs.submodules != 'false' }}
