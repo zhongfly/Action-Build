@@ -1,0 +1,152 @@
+name: Build yokai
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        required: true
+        default: 'null2264/yokai'
+      ref:
+        required: false
+        default: ''
+      debug:
+        required: false
+        default: false
+        type: boolean
+      version:
+        description: 'Version (without "v" prefix)'
+        required: true
+        type: string
+        default: '1'
+
+jobs:
+  build:
+    name: Build app
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+      - name: customize
+        run: |
+          #disable warnings for large updates
+          sed -i 's/largestSourceSize > MANGA_PER_SOURCE_QUEUE_WARNING_THRESHOLD/false/' app/src/main/java/eu/kanade/tachiyomi/data/library/LibraryUpdateJob.kt
+
+      - name: Setup Android SDK
+        run: |
+          ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0"
+
+      - name: Setup Gradle
+        uses: null2264/actions/gradle-setup@master
+        with:
+          java: 17
+          distro: adopt
+
+      - name: Copy CI gradle.properties
+        run: |
+          mkdir -p ~/.gradle
+          cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
+
+      - name: Extract branch name
+        id: branch_name
+        shell: bash
+        run: echo "NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+      - name: Get changelog
+        id: changelog
+        shell: bash
+        run: |
+          {
+            echo "CHANGELOG<<END_OF_FILE"
+            cat CHANGELOG.md || echo ""
+            echo
+            echo "END_OF_FILE"
+          } >> "$GITHUB_OUTPUT" 2> /dev/null
+
+      - name: Prepare build
+        run: |
+          set -x
+          echo "VERSION_TAG=v${{github.event.inputs.version}}" >> $GITHUB_ENV
+
+      # PROD
+      - name: Build release build
+        if: ${{!github.event.inputs.debug}}
+        run: ./gradlew assembleStandardRelease
+
+      - name: Build debug build
+        if: ${{github.event.inputs.debug}}
+        run: ./gradlew assembleStandardDebug
+
+      - name: Get version stage
+        id: version_stage
+        shell: bash
+        run: |
+          echo "STAGE=${{ github.event.inputs.debug && 'debug' || 'release' }}" >> $GITHUB_OUTPUT
+          echo "DIR=${{ github.event.inputs.debug && 'app/build/outputs/apk/standard/debug' || 'app/build/outputs/apk/standard/release' }}" >> $GITHUB_OUTPUT
+
+      - name: Sign APK
+        uses: null2264/actions/android-signer@master
+        if: ${{ env.VERSION_TAG != '' }}
+        with:
+          releaseDir: ${{ steps.version_stage.outputs.DIR }}
+          signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
+          keyAlias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          summarise: true
+
+
+      - name: Clean up build artifacts
+        if: env.VERSION_TAG != ''
+        run: |
+          set -e
+
+          dir="${{ steps.version_stage.outputs.DIR }}"
+
+          mv $dir/app-standard-universal-*-signed.apk yokai-${{ env.VERSION_TAG }}.apk
+
+          cp $dir/app-standard-arm64-v8a-*-signed.apk yokai-arm64-v8a-${{ env.VERSION_TAG }}.apk
+
+          cp $dir/app-standard-armeabi-v7a-*-signed.apk yokai-armeabi-v7a-${{ env.VERSION_TAG }}.apk
+
+          cp $dir/app-standard-x86-*-signed.apk yokai-x86-${{ env.VERSION_TAG }}.apk
+          
+          cp $dir/app-standard-x86_64-*-signed.apk yokai-x86_64-${{ env.VERSION_TAG }}.apk
+
+      - name: upload universal
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: yokai-${{ env.VERSION_TAG }}
+          path: yokai-${{ env.VERSION_TAG }}.apk
+
+      - name: upload arm64-v8a
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: yokai-arm64-v8a-${{ env.VERSION_TAG }}
+          path: yokai-arm64-v8a-${{ env.VERSION_TAG }}.apk
+
+      - name: upload armeabi-v7a
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: yokai-armeabi-v7a-${{ env.VERSION_TAG }}
+          path: yokai-armeabi-v7a-${{ env.VERSION_TAG }}.apk
+
+      - name: upload x86
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: yokai-x86-${{ env.VERSION_TAG }}
+          path: yokai-x86-${{ env.VERSION_TAG }}.apk
+
+      - name: upload x86_64
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: yokai-x86_64-${{ env.VERSION_TAG }}
+          path: yokai-x86_64-${{ env.VERSION_TAG }}.apk
