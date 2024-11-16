@@ -70,7 +70,7 @@ jobs:
         with:
           tauriScript: pnpm
           args: >
-            --config '{"bundle": {"createUpdaterArtifacts": false}}' --target ${{ matrix.target }}
+            --config '{"bundle": {"targets": [],"createUpdaterArtifacts": false}}' --target ${{ matrix.target }}
 
       - name: Portable Bundle
         if: matrix.os == 'windows-latest'
@@ -79,9 +79,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Artifacts
+      - name: Upload Portable
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}_portable
+          path: "**/*portable.zip"
+
+      - name: Upload exe
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: "**/*portable.zip"
+          path: |
+            src-tauri/target/${{ matrix.target }}/release/clash-verge.exe
