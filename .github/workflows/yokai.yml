@@ -73,19 +73,19 @@ jobs:
 
       # PROD
       - name: Build release build
-        if: ${{!github.event.inputs.debug}}
+        if: ${{ inputs.debug != true }}
         run: ./gradlew assembleStandardRelease
 
       - name: Build debug build
-        if: ${{github.event.inputs.debug}}
+        if: ${{ inputs.debug == true }}
         run: ./gradlew assembleStandardDebug
 
       - name: Get version stage
         id: version_stage
         shell: bash
         run: |
-          echo "STAGE=${{ github.event.inputs.debug && 'debug' || 'release' }}" >> $GITHUB_OUTPUT
-          echo "DIR=${{ github.event.inputs.debug && 'app/build/outputs/apk/standard/debug' || 'app/build/outputs/apk/standard/release' }}" >> $GITHUB_OUTPUT
+          echo "STAGE=${{ inputs.debug == true && 'debug' || 'release' }}" >> $GITHUB_OUTPUT
+          echo "DIR=${{ inputs.debug == true && 'app/build/outputs/apk/standard/debug' || 'app/build/outputs/apk/standard/release' }}" >> $GITHUB_OUTPUT
 
       - name: Sign APK
         uses: null2264/actions/android-signer@master
