@@ -44,7 +44,6 @@ jobs:
         with:
           workspaces: src-tauri
           cache-all-crates: true
-          cache-on-failure: true
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -54,7 +53,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: 'pnpm'
 
       - name: Pnpm install and check
@@ -75,7 +74,7 @@ jobs:
       - name: Portable Bundle
         if: matrix.os == 'windows-latest'
         run: |
-          pnpm portable ${{ matrix.target }} --alpha
+          pnpm portable ${{ matrix.target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
