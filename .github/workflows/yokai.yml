@@ -1,4 +1,4 @@
-name: Build yokai
+name: Build mihon/yokai
 on:
   workflow_dispatch:
     inputs:
@@ -48,7 +48,7 @@ jobs:
       - name: Copy CI gradle.properties
         run: |
           mkdir -p ~/.gradle
-          cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
+          cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties || true
 
       - name: Extract branch name
         id: branch_name
@@ -106,47 +106,47 @@ jobs:
 
           dir="${{ steps.version_stage.outputs.DIR }}"
 
-          mv $dir/app-standard-universal-*-signed.apk yokai-${{ env.VERSION_TAG }}.apk
+          mv $dir/app-standard-universal-*-signed.apk app-${{ env.VERSION_TAG }}.apk
 
-          cp $dir/app-standard-arm64-v8a-*-signed.apk yokai-arm64-v8a-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-arm64-v8a-*-signed.apk app-arm64-v8a-${{ env.VERSION_TAG }}.apk
 
-          cp $dir/app-standard-armeabi-v7a-*-signed.apk yokai-armeabi-v7a-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-armeabi-v7a-*-signed.apk app-armeabi-v7a-${{ env.VERSION_TAG }}.apk
 
-          cp $dir/app-standard-x86-*-signed.apk yokai-x86-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-x86-*-signed.apk app-x86-${{ env.VERSION_TAG }}.apk
           
-          cp $dir/app-standard-x86_64-*-signed.apk yokai-x86_64-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-x86_64-*-signed.apk app-x86_64-${{ env.VERSION_TAG }}.apk
 
       - name: upload universal
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: yokai-${{ env.VERSION_TAG }}
-          path: yokai-${{ env.VERSION_TAG }}.apk
+          name: app-${{ env.VERSION_TAG }}
+          path: app-${{ env.VERSION_TAG }}.apk
 
       - name: upload arm64-v8a
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: yokai-arm64-v8a-${{ env.VERSION_TAG }}
-          path: yokai-arm64-v8a-${{ env.VERSION_TAG }}.apk
+          name: app-arm64-v8a-${{ env.VERSION_TAG }}
+          path: app-arm64-v8a-${{ env.VERSION_TAG }}.apk
 
       - name: upload armeabi-v7a
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: yokai-armeabi-v7a-${{ env.VERSION_TAG }}
-          path: yokai-armeabi-v7a-${{ env.VERSION_TAG }}.apk
+          name: app-armeabi-v7a-${{ env.VERSION_TAG }}
+          path: app-armeabi-v7a-${{ env.VERSION_TAG }}.apk
 
       - name: upload x86
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: yokai-x86-${{ env.VERSION_TAG }}
-          path: yokai-x86-${{ env.VERSION_TAG }}.apk
+          name: app-x86-${{ env.VERSION_TAG }}
+          path: app-x86-${{ env.VERSION_TAG }}.apk
 
       - name: upload x86_64
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: yokai-x86_64-${{ env.VERSION_TAG }}
-          path: yokai-x86_64-${{ env.VERSION_TAG }}.apk
+          name: app-x86_64-${{ env.VERSION_TAG }}
+          path: app-x86_64-${{ env.VERSION_TAG }}.apk
