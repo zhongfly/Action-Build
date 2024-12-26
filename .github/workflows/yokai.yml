@@ -12,11 +12,6 @@ on:
         required: false
         default: false
         type: boolean
-      version:
-        description: 'Version (without "v" prefix)'
-        required: true
-        type: string
-        default: '1'
 
 jobs:
   build:
@@ -32,6 +27,8 @@ jobs:
           fetch-depth: 0
       - name: customize
         run: |
+          APP_NAME=$(echo "${{ github.event.inputs.repo }}" | awk -F'/' '{print $NF}')
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
           #disable warnings for large updates
           sed -i 's/largestSourceSize > MANGA_PER_SOURCE_QUEUE_WARNING_THRESHOLD/false/' app/src/main/java/eu/kanade/tachiyomi/data/library/LibraryUpdateJob.kt
 
@@ -66,11 +63,6 @@ jobs:
             echo "END_OF_FILE"
           } >> "$GITHUB_OUTPUT" 2> /dev/null
 
-      - name: Prepare build
-        run: |
-          set -x
-          echo "VERSION_TAG=v${{github.event.inputs.version}}" >> $GITHUB_ENV
-
       # PROD
       - name: Build release build
         if: ${{ inputs.debug != true }}
@@ -89,7 +81,6 @@ jobs:
 
       - name: Sign APK
         uses: null2264/actions/android-signer@master
-        if: ${{ env.VERSION_TAG != '' }}
         with:
           releaseDir: ${{ steps.version_stage.outputs.DIR }}
           signingKeyBase64: ${{ secrets.SIGN_FILE_BASE64 }}
@@ -100,53 +91,52 @@ jobs:
 
 
       - name: Clean up build artifacts
-        if: env.VERSION_TAG != ''
         run: |
           set -e
 
           dir="${{ steps.version_stage.outputs.DIR }}"
 
-          mv $dir/app-standard-universal-*-signed.apk app-${{ env.VERSION_TAG }}.apk
+          mv $dir/app-standard-universal-*-signed.apk ${{ env.APP_NAME }}.apk
 
-          cp $dir/app-standard-arm64-v8a-*-signed.apk app-arm64-v8a-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-arm64-v8a-*-signed.apk ${{ env.APP_NAME }}-arm64-v8a.apk
 
-          cp $dir/app-standard-armeabi-v7a-*-signed.apk app-armeabi-v7a-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-armeabi-v7a-*-signed.apk ${{ env.APP_NAME }}-armeabi-v7a.apk
 
-          cp $dir/app-standard-x86-*-signed.apk app-x86-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-x86-*-signed.apk ${{ env.APP_NAME }}-x86.apk
           
-          cp $dir/app-standard-x86_64-*-signed.apk app-x86_64-${{ env.VERSION_TAG }}.apk
+          cp $dir/app-standard-x86_64-*-signed.apk ${{ env.APP_NAME }}-x86_64.apk
 
       - name: upload universal
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: app-${{ env.VERSION_TAG }}
-          path: app-${{ env.VERSION_TAG }}.apk
+          name: ${{ env.APP_NAME }}
+          path: ${{ env.APP_NAME }}.apk
 
       - name: upload arm64-v8a
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: app-arm64-v8a-${{ env.VERSION_TAG }}
-          path: app-arm64-v8a-${{ env.VERSION_TAG }}.apk
+          name: ${{ env.APP_NAME }}-arm64-v8a
+          path: ${{ env.APP_NAME }}-arm64-v8a.apk
 
       - name: upload armeabi-v7a
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: app-armeabi-v7a-${{ env.VERSION_TAG }}
-          path: app-armeabi-v7a-${{ env.VERSION_TAG }}.apk
+          name: ${{ env.APP_NAME }}-armeabi-v7a
+          path: ${{ env.APP_NAME }}-armeabi-v7a.apk
 
       - name: upload x86
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: app-x86-${{ env.VERSION_TAG }}
-          path: app-x86-${{ env.VERSION_TAG }}.apk
+          name: ${{ env.APP_NAME }}-x86
+          path: ${{ env.APP_NAME }}-x86.apk
 
       - name: upload x86_64
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: app-x86_64-${{ env.VERSION_TAG }}
-          path: app-x86_64-${{ env.VERSION_TAG }}.apk
+          name: ${{ env.APP_NAME }}-x86_64
+          path: ${{ env.APP_NAME }}-x86_64.apk
