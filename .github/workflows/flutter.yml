@@ -28,7 +28,7 @@ on:
         default: 'false'
       name_pattern:
         required: false
-        default: 'build/**/release/*arm64*.apk'
+        default: 'build/**/*.apk'
 
 
 jobs:
