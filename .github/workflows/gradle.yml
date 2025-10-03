@@ -13,7 +13,8 @@ on:
         default: ''
       submodules:
         required: true
-        default: 'false'
+        default: false
+        type: boolean
       gradle_version:
         required: false
         default: 'wrapper'
@@ -22,7 +23,8 @@ on:
         default: './gradlew assembleRelease'
       firebase:
         required: true
-        default: 'false'
+        default: false
+        type: boolean
       firebase_config:
         required: true
         default: 'app/google-services.json'
@@ -40,7 +42,7 @@ jobs:
           fetch-depth: 0 
           
       - name: Checkout submodules
-        if: ${{ github.event.inputs.submodules != 'false' }}
+        if: ${{ github.event.inputs.submodules }}
         run: git submodule update --init --recursive
 
       - name: Prepare Java
@@ -60,7 +62,7 @@ jobs:
 #           cache: true
 
       - name: Prepare Firebase config
-        if: ${{ github.event.inputs.firebase == 'true' }}
+        if: ${{ github.event.inputs.firebase }}
         run: |
           # 写入Google Services配置
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ${{ github.event.inputs.firebase_config}}
