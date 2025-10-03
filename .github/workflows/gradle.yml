@@ -20,6 +20,12 @@ on:
       build_command:
         required: true
         default: './gradlew assembleRelease'
+      firebase:
+        required: true
+        default: 'false'
+      firebase_config:
+        required: true
+        default: 'app/google-services.json'
 
 jobs:
   gradle:
@@ -52,6 +58,12 @@ jobs:
 #             build-tools;30.0.2
 #             ndk;22.1.7171670
 #           cache: true
+
+      - name: Prepare Firebase config
+        if: ${{ github.event.inputs.firebase == 'true' }}
+        run: |
+          # 写入Google Services配置
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ${{ github.event.inputs.firebase_config}}
 
       - name: Build
         uses: gradle/actions/setup-gradle@v4
