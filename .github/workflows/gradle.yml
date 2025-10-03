@@ -28,6 +28,9 @@ on:
       firebase_config:
         required: true
         default: 'app/google-services.json'
+      command:
+        description: 'input command you want to run before build'
+        required: false
 
 jobs:
   gradle:
@@ -66,6 +69,26 @@ jobs:
         run: |
           # 写入Google Services配置
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ${{ github.event.inputs.firebase_config}}
+
+      - name: Running custom command
+        if: ${{ inputs.command != '' }}
+        shell: bash
+        continue-on-error: true
+        run: |
+          retry-tool() {
+            local RETRY_COUNTER=0
+            local MAX_RETRY=3
+            while [[ $RETRY_COUNTER -lt $MAX_RETRY ]]; do
+                $@ && break || sleep 2
+                RETRY_COUNTER=$(( $RETRY_COUNTER + 1 ))
+                echo "Retry $RETRY_COUNTER..."
+            done
+            if [[ $RETRY_COUNTER -ge $MAX_RETRY ]]; then
+                echo "Max retry count exceeded."
+            fi
+          }
+          set -x
+          ${{ inputs.command }}
 
       - name: Build
         uses: gradle/actions/setup-gradle@v4
