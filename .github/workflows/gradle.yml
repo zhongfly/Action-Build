@@ -42,7 +42,7 @@ jobs:
           fetch-depth: 0 
           
       - name: Checkout submodules
-        if: ${{ github.event.inputs.submodules }}
+        if: ${{ inputs.submodules }}
         run: git submodule update --init --recursive
 
       - name: Prepare Java
@@ -62,7 +62,7 @@ jobs:
 #           cache: true
 
       - name: Prepare Firebase config
-        if: ${{ github.event.inputs.firebase }}
+        if: ${{ inputs.firebase }}
         run: |
           # 写入Google Services配置
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ${{ github.event.inputs.firebase_config}}
