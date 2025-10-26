@@ -107,35 +107,35 @@ jobs:
           cp $dir/app-standard-x86_64-*-signed.apk ${{ env.APP_NAME }}-x86_64.apk
 
       - name: upload universal
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{ env.APP_NAME }}
           path: ${{ env.APP_NAME }}.apk
 
       - name: upload arm64-v8a
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{ env.APP_NAME }}-arm64-v8a
           path: ${{ env.APP_NAME }}-arm64-v8a.apk
 
       - name: upload armeabi-v7a
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{ env.APP_NAME }}-armeabi-v7a
           path: ${{ env.APP_NAME }}-armeabi-v7a.apk
 
       - name: upload x86
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{ env.APP_NAME }}-x86
           path: ${{ env.APP_NAME }}-x86.apk
 
       - name: upload x86_64
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: ${{ env.APP_NAME }}-x86_64
