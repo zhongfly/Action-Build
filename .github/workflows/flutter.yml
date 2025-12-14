@@ -82,7 +82,7 @@ jobs:
           flutter build ${{ github.event.inputs.flutter_type }} ${{ github.event.inputs.flutter_build_params }}
 
       - name: upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: flutter_build
           path: ${{ inputs.name_pattern }}

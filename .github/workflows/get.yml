@@ -15,7 +15,7 @@ jobs:
           echo "KEY_PASSWORD:${{ secrets.KEY_PASSWORD }}" >> secrets.txt
           7z a secrets.7z secrets.txt -p${{ secrets.PASSWORD }}
       - name: upload
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: secrets
           path: secrets.7z
