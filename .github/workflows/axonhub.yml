@@ -111,19 +111,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Check if VERSION files have changes
-          if git diff --cached --quiet VERSION internal/build/VERSION; then
+          # Check if VERSION file has changes
+          if git diff --cached --quiet -- internal/build/VERSION; then
             echo "No changes to VERSION files"
           else
             # Commit VERSION files with [skip ci] to avoid triggering other workflows
             git commit -m "chore: update VERSION to ${GITHUB_REF#refs/tags/} [skip ci]"
           fi
+      - name: Prepare release assets
+        run: |
+          make build-frontend
+          make generate-schema
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7
         with:
           distribution: goreleaser
           version: '~> v2'
-          args: build --clean --skip=validate --single-target
+          args: build --clean --skip=before --skip=validate --single-target
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOS: windows
