@@ -123,7 +123,7 @@ jobs:
         with:
           distribution: goreleaser
           version: '~> v2'
-          args: build --clean --skip=validate --single-target --snapshot
+          args: build --clean --skip=validate --single-target
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOS: windows
