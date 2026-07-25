@@ -72,16 +72,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOS: windows
           GOARCH: amd64
-      - name: Find release assets
-        run: |
-          sudo find / -name "axonhub.exe"
-      - name: Upload assets
-        uses: actions/upload-artifact@v7
-        with:
-          name: axonhub.exe
-          path: /home/runner/work/Action-Build/Action-Build/.builds/build_windows_amd64_v1/axonhub.exe
       - name: Upload assets
         uses: actions/upload-artifact@v7
         with:
           name: axonhub
-          path: ./.builds/build_windows_amd64_v1/axonhub.exe
+          path: ./.builds/**/axonhub.exe
