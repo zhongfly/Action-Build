@@ -76,4 +76,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: axonhub
-          path: ./.builds/**/axonhub.exe
+          path: ./.builds/build_windows_amd64_v1/axonhub.exe
