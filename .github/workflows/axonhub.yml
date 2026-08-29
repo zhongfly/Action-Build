@@ -2,6 +2,11 @@ name: Axonhub
 
 on:
   workflow_dispatch:
+    inputs:
+      pr_numbers:
+        description: 'PR numbers to merge (comma-separated, e.g. 123,456)'
+        required: false
+        default: ''
 
 jobs:
   goreleaser:
@@ -12,6 +17,35 @@ jobs:
         with:
           repository: looplj/axonhub
           fetch-depth: 0
+
+      - name: Merge PRs
+        if: ${{ inputs.pr_numbers != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBERS: ${{ inputs.pr_numbers }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          IFS=',' read -ra PRS <<< "$PR_NUMBERS"
+          for pr in "${PRS[@]}"; do
+            pr=$(echo "$pr" | xargs)  # trim whitespace
+            if [ -z "$pr" ]; then
+              continue
+            fi
+            echo "=== Processing PR #$pr ==="
+
+            # Fetch PR head
+            git fetch origin "pull/$pr/head:pr-$pr"
+
+            # Check if merge would have conflicts using merge-tree
+            if git merge-tree --write-tree HEAD "pr-$pr" > /dev/null 2>&1; then
+              echo "PR #$pr can be merged without conflicts, merging..."
+              git merge --no-edit "pr-$pr"
+            else
+              echo "PR #$pr has conflicts, skipping..."
+            fi
+          done
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
