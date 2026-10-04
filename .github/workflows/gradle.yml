@@ -91,7 +91,7 @@ jobs:
           ${{ inputs.command }}
 
       - name: Build
-        uses: gradle/actions/setup-gradle@v6.3.0
+        uses: gradle/actions/setup-gradle@v6.4.0
         with:
           gradle-version: ${{ github.event.inputs.gradle_version }}
           validate-wrappers: false
