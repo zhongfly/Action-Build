@@ -4,7 +4,7 @@ on:
     inputs:
       repo:
         required: true
-        default: 'null2264/yokai'
+        default: 'rokku-app/rokku'
       ref:
         required: false
         default: ''
